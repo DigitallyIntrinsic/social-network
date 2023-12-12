@@ -29,4 +29,22 @@ const thoughtController = {
     }
   },
 
-  
+    // Create thought
+    async createThought(req, res) {
+        try {
+          const thought = await Thought.create(req.body);
+    
+          const user = await User.findByIdAndUpdate(
+            req.body.userId,
+            { $addToSet: { thoughts: thought._id } },
+            { runValidators: true, new: true }
+          );
+    
+          return res.status(200).json({ thought, user });
+        } catch (err) {
+          console.log(err);
+          return res.status(500).json(err);
+        }
+      },
+
+      
